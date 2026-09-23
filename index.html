@@ -1,0 +1,3734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+>
+<title>Team Jigsaw Challenge</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --navy: #06264a;
+    --muted: #64748b;
+    --border: #dbeafe;
+    --white: #ffffff;
+    --red: #dc2626;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--navy);
+    background:
+        radial-gradient(circle at top left, #dbeafe, transparent 38%),
+        radial-gradient(circle at bottom right, #fff7ed, transparent 38%),
+        linear-gradient(135deg, #eff6ff, #f8fafc);
+}
+
+button,
+input {
+    font: inherit;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.screen {
+    min-height: 100vh;
+    padding: 8px 14px;
+}
+
+.center-screen {
+    display: grid;
+    place-items: center;
+}
+
+.card,
+.panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 14px 38px rgba(16, 42, 67, 0.13);
+}
+
+.card {
+    width: min(540px, 100%);
+    padding: 28px;
+}
+
+.panel {
+    padding: 20px;
+}
+
+.logo {
+    font-size: 54px;
+    text-align: center;
+}
+
+h1,
+h2,
+p {
+    margin-top: 0;
+}
+
+.subtitle {
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.field {
+    display: grid;
+    margin: 18px 0;
+    gap: 8px;
+}
+
+.field input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 11px;
+    outline: none;
+}
+
+.field input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.button {
+    padding: 13px 18px;
+    color: var(--white);
+    font-weight: 800;
+    cursor: pointer;
+    background: var(--primary);
+    border: 0;
+    border-radius: 11px;
+}
+
+.button:hover {
+    background: var(--primary-dark);
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.button-full {
+    width: 100%;
+}
+
+.button-secondary {
+    background: #475569;
+}
+
+.button-secondary:hover {
+    background: #334155;
+}
+
+.button-danger {
+    background: var(--red);
+}
+
+.button-danger:hover {
+    background: #b91c1c;
+}
+
+.button-admin {
+    color: #713f12;
+    background: #facc15;
+}
+
+.button-admin:hover {
+    background: #eab308;
+}
+
+.login-actions {
+    display: grid;
+    gap: 11px;
+}
+
+.login-status {
+    margin: 14px 0 0;
+    color: #9a3412;
+    font-size: 13px;
+    line-height: 1.45;
+    text-align: center;
+}
+
+.page-container {
+    width: min(1280px, 100%);
+    height: calc(100vh - 16px);
+    margin: auto;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 52px;
+    margin-bottom: 6px;
+    gap: 12px;
+}
+
+.topbar h1 {
+    margin: 0;
+    font-size: 23px;
+}
+
+.topbar .subtitle {
+    margin: 4px 0 0;
+    font-size: 13px;
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.chip {
+    padding: 7px 11px;
+    color: var(--navy);
+    font-size: 12px;
+    font-weight: 750;
+    white-space: nowrap;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+}
+
+.admin-chip {
+    color: #166534;
+    background: #dcfce7;
+    border-color: #86efac;
+}
+
+/* Administrator login */
+
+.admin-overlay {
+    position: fixed;
+    z-index: 4000;
+    display: grid;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.88);
+    inset: 0;
+    place-items: center;
+}
+
+.admin-dialog {
+    width: min(460px, 100%);
+    padding: 26px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35);
+}
+
+.admin-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* Lobby */
+
+.lobby-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(330px, 0.75fr);
+    gap: 18px;
+}
+
+.players-panel,
+.stats-panel {
+    min-height: 350px;
+}
+
+.player-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    max-height: 450px;
+    overflow-y: auto;
+    gap: 9px;
+}
+
+.player-item {
+    padding: 11px 13px;
+    overflow: hidden;
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.player-item.current-player {
+    color: #1d4ed8;
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+
+.stats-panel {
+    display: flex;
+    padding: 24px;
+    align-items: flex-start;
+}
+
+.stats-content {
+    width: 100%;
+    padding: 10px 16px;
+}
+
+.player-count {
+    margin: 0 0 12px;
+    color: var(--primary);
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.stats-content h2 {
+    margin: 0 0 28px;
+    font-size: 28px;
+}
+
+.stats-content .subtitle {
+    margin-bottom: 24px;
+}
+
+.stats-content .button {
+    margin-bottom: 12px;
+}
+
+/* Game */
+
+.progress-track {
+    height: 6px;
+    margin: 2px 0 6px;
+    overflow: hidden;
+    background: #cfe4ff;
+    border-radius: 999px;
+}
+
+.progress-fill {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #06b6d4);
+    transition: width 0.25s ease;
+}
+
+.game-panel {
+    height: calc(100vh - 82px);
+    padding: 8px 10px 10px;
+    overflow: hidden;
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 25px;
+    font-size: 12px;
+}
+
+.puzzle-stage {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 29px);
+    overflow: hidden;
+    touch-action: none;
+    background-color: #eef2f7;
+    background-image:
+        linear-gradient(45deg, #fff 25%, transparent 25%),
+        linear-gradient(-45deg, #fff 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #fff 75%),
+        linear-gradient(-45deg, transparent 75%, #fff 75%);
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+    background-size: 20px 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+}
+
+.puzzle-frame {
+    position: absolute;
+    background: #dbeafe;
+    border: 2px dashed #60a5fa;
+}
+
+.preview-image {
+    position: absolute;
+    z-index: 500;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.33);
+}
+
+.preview-label {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    padding: 8px 14px;
+    color: #ffffff;
+    font-size: 12px;
+    white-space: nowrap;
+    background: rgba(16, 42, 67, 0.9);
+    border-radius: 999px;
+    transform: translateX(-50%);
+}
+
+.puzzle-piece {
+    position: absolute;
+    z-index: 10;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    filter:
+        drop-shadow(0 7px 8px rgba(0, 0, 0, 0.34))
+        drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+}
+
+.puzzle-piece:active {
+    z-index: 200;
+    cursor: grabbing;
+    transform: scale(1.03);
+}
+
+.puzzle-piece.locked {
+    z-index: 3;
+    pointer-events: none;
+    filter: none;
+    animation: piece-snap 0.22s ease-out;
+}
+
+@keyframes piece-snap {
+    0% {
+        transform: scale(1.12);
+    }
+
+    55% {
+        transform: scale(0.97);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Live status */
+
+.score-button {
+    cursor: pointer;
+}
+
+.score-count {
+    display: inline-grid;
+    min-width: 19px;
+    height: 19px;
+    margin-left: 4px;
+    padding: 0 5px;
+    color: #ffffff;
+    background: var(--primary);
+    border-radius: 999px;
+    place-items: center;
+}
+
+.score-panel {
+    position: fixed;
+    z-index: 2200;
+    top: 60px;
+    right: 14px;
+    width: min(420px, calc(100vw - 28px));
+    max-height: calc(100vh - 74px);
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #bfdbfe;
+    border-radius: 16px;
+    box-shadow: 0 18px 55px rgba(15, 23, 42, 0.28);
+}
+
+.score-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px;
+    background: linear-gradient(135deg, #eff6ff, #ffffff);
+    border-bottom: 1px solid #dbeafe;
+}
+
+.close-score {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    cursor: pointer;
+    background: #ffffff;
+    border: 1px solid #dbeafe;
+    border-radius: 50%;
+}
+
+.score-list {
+    display: grid;
+    max-height: calc(100vh - 145px);
+    padding: 8px;
+    overflow-y: auto;
+    gap: 6px;
+}
+
+.score-item {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    align-items: center;
+    padding: 8px 9px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    gap: 8px;
+}
+
+.score-item.current {
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+
+.score-item.finished {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.score-rank {
+    display: grid;
+    width: 28px;
+    height: 28px;
+    font-weight: 800;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 50%;
+    place-items: center;
+}
+
+.score-name {
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.score-detail {
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.score-badge {
+    padding: 5px 8px;
+    color: #1d4ed8;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+    background: #dbeafe;
+    border-radius: 999px;
+}
+
+/* Overlays */
+
+.overlay {
+    position: fixed;
+    z-index: 2500;
+    display: grid;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.9);
+    inset: 0;
+    place-items: center;
+}
+
+.overlay-card {
+    width: min(700px, 100%);
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 26px;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 22px;
+}
+
+.large-symbol {
+    color: var(--primary);
+    font-size: 82px;
+    font-weight: 900;
+}
+
+.winner-list {
+    display: grid;
+    margin: 16px 0;
+    gap: 9px;
+}
+
+.winner-item {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    align-items: center;
+    padding: 11px 14px;
+    text-align: left;
+    background: #f8fafc;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    gap: 10px;
+}
+
+.winner-item:nth-child(1) {
+    background: #fff7cc;
+    border-color: #facc15;
+}
+
+.winner-item:nth-child(2) {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+}
+
+.winner-item:nth-child(3) {
+    background: #ffedd5;
+    border-color: #fb923c;
+}
+
+.winner-item:nth-child(4) {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.winner-item:nth-child(5) {
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+
+.toast {
+    position: fixed;
+    z-index: 5000;
+    bottom: 14px;
+    left: 50%;
+    max-width: calc(100% - 30px);
+    padding: 10px 16px;
+    color: #ffffff;
+    background: var(--navy);
+    border-radius: 10px;
+    transform: translateX(-50%);
+}
+
+@media (max-width: 800px) {
+    .page-container {
+        height: auto;
+    }
+
+    .lobby-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .stats-panel {
+        min-height: auto;
+        padding: 18px;
+    }
+
+    .game-panel {
+        height: auto;
+    }
+
+    .puzzle-stage {
+        height: 72vh;
+        min-height: 460px;
+    }
+
+    .score-panel {
+        top: 8px;
+        right: 8px;
+        width: calc(100vw - 16px);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<section id="loginScreen" class="screen center-screen">
+    <div class="card">
+        <div class="logo">🧩</div>
+
+        <h1 style="text-align:center">
+            Team Jigsaw Challenge
+        </h1>
+
+        <p class="subtitle" style="text-align:center">
+            Enter your name to join the multiplayer lobby
+        </p>
+
+        <div class="field">
+            <label for="playerName">
+                <b>Player name</b>
+            </label>
+
+            <input
+                id="playerName"
+                type="text"
+                maxlength="40"
+                placeholder="Enter your full name"
+            >
+        </div>
+
+        <div class="login-actions">
+            <button
+                id="joinButton"
+                class="button button-full"
+                type="button"
+            >
+                Join Game
+            </button>
+
+            <button
+                id="adminLoginButton"
+                class="button button-admin button-full"
+                type="button"
+            >
+                Admin Login
+            </button>
+
+            <button
+                id="loginResetButton"
+                class="button button-danger button-full hidden admin-only"
+                type="button"
+            >
+                Reset Previous Game
+            </button>
+
+            <button
+                id="adminLogoutButton"
+                class="button button-secondary button-full hidden admin-only"
+                type="button"
+            >
+                Admin Logout
+            </button>
+        </div>
+
+        <p id="loginStatus" class="login-status"></p>
+    </div>
+</section>
+
+<div id="adminOverlay" class="admin-overlay hidden">
+    <div class="admin-dialog">
+        <h2>Administrator Login</h2>
+
+        <p class="subtitle">
+            Sign in with the administrator account.
+        </p>
+
+        <div class="field">
+            <label for="adminEmail">
+                <b>Admin email</b>
+            </label>
+
+            <input
+                id="adminEmail"
+                type="email"
+                autocomplete="username"
+                placeholder="Enter admin email"
+            >
+        </div>
+
+        <div class="field">
+            <label for="adminPassword">
+                <b>Password</b>
+            </label>
+
+            <input
+                id="adminPassword"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Enter password"
+            >
+        </div>
+
+        <p id="adminLoginStatus" class="login-status"></p>
+
+        <div class="admin-actions">
+            <button
+                id="cancelAdminButton"
+                class="button button-secondary"
+                type="button"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="submitAdminButton"
+                class="button button-admin"
+                type="button"
+            >
+                Sign In
+            </button>
+        </div>
+    </div>
+</div>
+
+<section id="lobbyScreen" class="screen hidden">
+    <main class="page-container">
+
+        <header class="topbar">
+            <div>
+                <h1>🧩 Game Lobby</h1>
+
+                <p class="subtitle">
+                    Players can join before the administrator starts the game.
+                </p>
+            </div>
+
+            <div class="chips">
+                <span id="lobbyPlayerChip" class="chip"></span>
+
+                <span
+                    id="lobbyAdminChip"
+                    class="chip admin-chip hidden"
+                >
+                    Administrator
+                </span>
+            </div>
+        </header>
+
+        <div class="lobby-grid">
+            <section class="panel players-panel">
+                <h2>Players joined</h2>
+
+                <div
+                    id="playerList"
+                    class="player-list"
+                ></div>
+            </section>
+
+            <section class="panel stats-panel">
+                <div class="stats-content">
+
+                    <div
+                        id="playerCount"
+                        class="player-count"
+                    >
+                        0
+                    </div>
+
+                    <h2 id="playerCountWord">
+                        Players
+                    </h2>
+
+                    <p id="lobbyInstruction" class="subtitle">
+                        Please wait for the administrator to start the game.
+                    </p>
+
+                    <button
+                        id="startButton"
+                        class="button button-full hidden admin-only"
+                        type="button"
+                    >
+                        Start Game
+                    </button>
+
+                    <button
+                        id="resetButton"
+                        class="button button-danger button-full hidden admin-only"
+                        type="button"
+                    >
+                        Reset Room
+                    </button>
+
+                    <button
+                        id="lobbyAdminLogoutButton"
+                        class="button button-secondary button-full hidden admin-only"
+                        type="button"
+                    >
+                        Admin Logout
+                    </button>
+
+                </div>
+            </section>
+        </div>
+    </main>
+</section>
+
+<section id="gameScreen" class="screen hidden">
+    <main class="page-container">
+
+        <header class="topbar">
+            <div>
+                <h1 id="roundHeading">
+                    Round 1 of 5
+                </h1>
+
+                <div
+                    id="puzzleTitle"
+                    class="subtitle"
+                ></div>
+            </div>
+
+            <div class="chips">
+                <span
+                    id="gamePlayerChip"
+                    class="chip"
+                ></span>
+
+                <span
+                    id="gameAdminChip"
+                    class="chip admin-chip hidden"
+                >
+                    Administrator
+                </span>
+
+                <span id="timer" class="chip">
+                    00:00
+                </span>
+
+                <span id="pieceCounter" class="chip">
+                    0 / 20
+                </span>
+
+                <button
+                    id="scoreButton"
+                    class="chip score-button"
+                    type="button"
+                >
+                    Live Status
+
+                    <span
+                        id="scoreCount"
+                        class="score-count"
+                    >
+                        0
+                    </span>
+                </button>
+            </div>
+        </header>
+
+        <aside
+            id="scorePanel"
+            class="score-panel hidden"
+        >
+            <div class="score-header">
+                <div>
+                    <b>Live Player Status</b>
+
+                    <div class="subtitle">
+                        Current progress of all players
+                    </div>
+                </div>
+
+                <button
+                    id="closeScoreButton"
+                    class="close-score"
+                    type="button"
+                >
+                    ×
+                </button>
+            </div>
+
+            <div
+                id="scoreList"
+                class="score-list"
+            ></div>
+        </aside>
+
+        <div class="progress-track">
+            <span
+                id="overallProgress"
+                class="progress-fill"
+            ></span>
+        </div>
+
+        <section class="panel game-panel">
+            <div class="panel-heading">
+                <b>Arrange the 20 jigsaw pieces</b>
+
+                <span id="roundStatus">
+                    Preview
+                </span>
+            </div>
+
+            <div
+                id="puzzleStage"
+                class="puzzle-stage"
+            ></div>
+        </section>
+
+    </main>
+</section>
+
+<div id="countdownOverlay" class="overlay hidden">
+    <div class="overlay-card">
+        <h2>Game starting</h2>
+
+        <div
+            id="countdownNumber"
+            class="large-symbol"
+        >
+            5
+        </div>
+
+        <p>Get ready...</p>
+    </div>
+</div>
+
+<div id="resultOverlay" class="overlay hidden">
+    <div class="overlay-card">
+        <div class="large-symbol">🏆</div>
+
+        <h1>Congratulations!</h1>
+
+        <p id="resultMessage"></p>
+
+        <div
+            id="winnerList"
+            class="winner-list"
+        ></div>
+
+        <p id="gameEndedMessage"></p>
+
+        <button
+            id="backLobbyButton"
+            class="button"
+            type="button"
+        >
+            Back to Lobby
+        </button>
+    </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getDatabase,
+    ref,
+    set,
+    get,
+    update,
+    onValue,
+    runTransaction,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey:
+        "AIzaSyAic77ljm0fBs4HHWaYrITsziMhD7LCK_g",
+
+    authDomain:
+        "memory-game-a04d2.firebaseapp.com",
+
+    databaseURL:
+        "https://memory-game-a04d2-default-rtdb.firebaseio.com/",
+
+    projectId:
+        "memory-game-a04d2",
+
+    storageBucket:
+        "memory-game-a04d2.firebasestorage.app",
+
+    messagingSenderId:
+        "448780154548",
+
+    appId:
+        "1:448780154548:web:dece58512596a7e9d109e1",
+
+    measurementId:
+        "G-WJLNLB5FTG"
+};
+
+const firebaseApp =
+    initializeApp(
+        firebaseConfig
+    );
+
+const database =
+    getDatabase(
+        firebaseApp
+    );
+
+const auth =
+    getAuth(
+        firebaseApp
+    );
+
+/*
+Replace this with the email created in
+Firebase Authentication.
+*/
+
+const ADMIN_EMAIL =
+    "YOUR_ADMIN_EMAIL@example.com";
+
+const ROOM_CODE =
+    "JIGSAW_ADMIN_01";
+
+const MAX_WINNERS =
+    5;
+
+const PUZZLES = [
+    {
+        title:
+            "Multicolored Umbrellas Floating above the Street",
+
+        image:
+            "Multicolored Umbrellas Floating above the Street.png"
+    },
+    {
+        title:
+            "View of Vernazza, Cinque Terre, Italy",
+
+        image:
+            "View of Vernazza, Cinque Terre, Italy.png"
+    },
+    {
+        title:
+            "Colorful Mosaics in a Buddhist Temple, Thailand",
+
+        image:
+            "Colorful Mosaics in a Buddhist Temple, Thailand.png"
+    },
+    {
+        title:
+            "View of Colorful Houses in Cinque Terre, Italy",
+
+        image:
+            "View of Colorful Houses in Cinque Terre, Italy.png"
+    },
+    {
+        title:
+            "View of the Taj Mahal in Agra, India",
+
+        image:
+            "View of the Taj Mahal in Agra, India.png"
+    }
+];
+
+const $ =
+    id =>
+        document.getElementById(id);
+
+let playerId =
+    sessionStorage.getItem(
+        "jigsawPlayerId"
+    );
+
+if (!playerId) {
+    playerId =
+        typeof crypto.randomUUID === "function"
+            ? crypto.randomUUID()
+            : Date.now() +
+              "-" +
+              Math.random();
+
+    sessionStorage.setItem(
+        "jigsawPlayerId",
+        playerId
+    );
+}
+
+let playerName = "";
+let isAdmin = false;
+let currentRound = 0;
+let placedPieces = 0;
+let gameStartTime = 0;
+
+let timerInterval = null;
+let gameStarted = false;
+let gameActive = true;
+let gameEnded = false;
+let winnerSubmitted = false;
+let roomListenerStarted = false;
+
+let horizontalEdges = [];
+let verticalEdges = [];
+let puzzleLayout = null;
+let audioContext = null;
+
+function roomReference() {
+    return ref(
+        database,
+        "jigsawGameRooms/" +
+        ROOM_CODE
+    );
+}
+
+function playerReference() {
+    return ref(
+        database,
+        "jigsawGameRooms/" +
+        ROOM_CODE +
+        "/players/" +
+        playerId
+    );
+}
+
+/* Administrator authentication */
+
+function validateAdmin(user) {
+    return Boolean(
+        user &&
+        user.email &&
+        user.email.toLowerCase() ===
+        ADMIN_EMAIL.toLowerCase()
+    );
+}
+
+function updateAdminInterface() {
+    document
+        .querySelectorAll(
+            ".admin-only"
+        )
+        .forEach(
+            function (element) {
+                element.classList.toggle(
+                    "hidden",
+                    !isAdmin
+                );
+            }
+        );
+
+    $("lobbyAdminChip").classList.toggle(
+        "hidden",
+        !isAdmin
+    );
+
+    $("gameAdminChip").classList.toggle(
+        "hidden",
+        !isAdmin
+    );
+
+    $("adminLoginButton").classList.toggle(
+        "hidden",
+        isAdmin
+    );
+
+    $("lobbyInstruction").textContent =
+        isAdmin
+            ? "Once everyone has joined, click Start Game."
+            : "Please wait for the administrator to start the game.";
+}
+
+onAuthStateChanged(
+    auth,
+    async function (user) {
+        isAdmin =
+            validateAdmin(
+                user
+            );
+
+        if (
+            user &&
+            !isAdmin
+        ) {
+            await signOut(
+                auth
+            );
+
+            showToast(
+                "This account is not authorized."
+            );
+        }
+
+        updateAdminInterface();
+    }
+);
+
+async function adminSignIn() {
+    const email =
+        $("adminEmail")
+            .value
+            .trim();
+
+    const password =
+        $("adminPassword")
+            .value;
+
+    $("adminLoginStatus").textContent =
+        "";
+
+    if (
+        !email ||
+        !password
+    ) {
+        $("adminLoginStatus").textContent =
+            "Enter the administrator email and password.";
+
+        return;
+    }
+
+    if (
+        email.toLowerCase() !==
+        ADMIN_EMAIL.toLowerCase()
+    ) {
+        $("adminLoginStatus").textContent =
+            "This email is not authorized.";
+
+        return;
+    }
+
+    $("submitAdminButton").disabled =
+        true;
+
+    try {
+        const result =
+            await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+        if (
+            !validateAdmin(
+                result.user
+            )
+        ) {
+            await signOut(
+                auth
+            );
+
+            throw new Error(
+                "Unauthorized administrator."
+            );
+        }
+
+        isAdmin =
+            true;
+
+        updateAdminInterface();
+
+        $("adminOverlay").classList.add(
+            "hidden"
+        );
+
+        $("adminPassword").value =
+            "";
+
+        showToast(
+            "Administrator login successful."
+        );
+
+    } catch (error) {
+        $("adminLoginStatus").textContent =
+            "Unable to sign in. Check the email and password.";
+
+    } finally {
+        $("submitAdminButton").disabled =
+            false;
+    }
+}
+
+async function adminSignOut() {
+    await signOut(
+        auth
+    );
+
+    isAdmin =
+        false;
+
+    updateAdminInterface();
+
+    showToast(
+        "Administrator signed out."
+    );
+}
+
+function requireAdmin() {
+    if (!isAdmin) {
+        showToast(
+            "Only the administrator can perform this action."
+        );
+
+        return false;
+    }
+
+    return true;
+}
+
+/* Helpers */
+
+function escapeHtml(value) {
+    const element =
+        document.createElement(
+            "div"
+        );
+
+    element.textContent =
+        value;
+
+    return element.innerHTML;
+}
+
+function showToast(message) {
+    $("toast").textContent =
+        message;
+
+    $("toast").classList.remove(
+        "hidden"
+    );
+
+    clearTimeout(
+        showToast.timeout
+    );
+
+    showToast.timeout =
+        setTimeout(
+            function () {
+                $("toast").classList.add(
+                    "hidden"
+                );
+            },
+            2400
+        );
+}
+
+function formatTime(seconds) {
+    return (
+        String(
+            Math.floor(
+                seconds / 60
+            )
+        ).padStart(2, "0") +
+        ":" +
+        String(
+            seconds % 60
+        ).padStart(2, "0")
+    );
+}
+
+function playMatchSound() {
+    try {
+        audioContext =
+            audioContext ||
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+        if (
+            audioContext.state ===
+            "suspended"
+        ) {
+            audioContext.resume();
+        }
+
+        const now =
+            audioContext.currentTime;
+
+        const oscillator =
+            audioContext.createOscillator();
+
+        const gain =
+            audioContext.createGain();
+
+        oscillator.frequency.setValueAtTime(
+            620,
+            now
+        );
+
+        oscillator.frequency
+            .exponentialRampToValueAtTime(
+                840,
+                now + 0.08
+            );
+
+        gain.gain.setValueAtTime(
+            0.0001,
+            now
+        );
+
+        gain.gain
+            .exponentialRampToValueAtTime(
+                0.16,
+                now + 0.01
+            );
+
+        gain.gain
+            .exponentialRampToValueAtTime(
+                0.0001,
+                now + 0.12
+            );
+
+        oscillator.connect(
+            gain
+        );
+
+        gain.connect(
+            audioContext.destination
+        );
+
+        oscillator.start(
+            now
+        );
+
+        oscillator.stop(
+            now + 0.13
+        );
+
+    } catch (error) {
+        console.log(
+            "Sound unavailable."
+        );
+    }
+}
+
+/* Event listeners */
+
+$("joinButton").onclick =
+    joinLobby;
+
+$("playerName").onkeydown =
+    function (event) {
+        if (
+            event.key ===
+            "Enter"
+        ) {
+            joinLobby();
+        }
+    };
+
+$("adminLoginButton").onclick =
+    function () {
+        $("adminOverlay").classList.remove(
+            "hidden"
+        );
+
+        if (
+            !ADMIN_EMAIL.includes(
+                "YOUR_ADMIN"
+            )
+        ) {
+            $("adminEmail").value =
+                ADMIN_EMAIL;
+        }
+
+        $("adminPassword").focus();
+    };
+
+$("cancelAdminButton").onclick =
+    function () {
+        $("adminOverlay").classList.add(
+            "hidden"
+        );
+
+        $("adminLoginStatus").textContent =
+            "";
+    };
+
+$("submitAdminButton").onclick =
+    adminSignIn;
+
+$("adminPassword").onkeydown =
+    function (event) {
+        if (
+            event.key ===
+            "Enter"
+        ) {
+            adminSignIn();
+        }
+    };
+
+$("adminLogoutButton").onclick =
+    adminSignOut;
+
+$("lobbyAdminLogoutButton").onclick =
+    adminSignOut;
+
+$("startButton").onclick =
+    startGameForEveryone;
+
+$("loginResetButton").onclick =
+    resetRoom;
+
+$("resetButton").onclick =
+    resetRoom;
+
+$("scoreButton").onclick =
+    function () {
+        $("scorePanel").classList.toggle(
+            "hidden"
+        );
+    };
+
+$("closeScoreButton").onclick =
+    function () {
+        $("scorePanel").classList.add(
+            "hidden"
+        );
+    };
+
+$("backLobbyButton").onclick =
+    function () {
+        window.location.reload();
+    };
+
+/* Join multiplayer lobby */
+
+async function joinLobby() {
+    playerName =
+        $("playerName")
+            .value
+            .trim();
+
+    if (!playerName) {
+        showToast(
+            "Please enter your name."
+        );
+
+        $("playerName").focus();
+
+        return;
+    }
+
+    $("joinButton").disabled =
+        true;
+
+    $("loginStatus").textContent =
+        "Connecting to the multiplayer room...";
+
+    try {
+        const snapshot =
+            await get(
+                roomReference()
+            );
+
+        const room =
+            snapshot.exists()
+                ? snapshot.val()
+                : null;
+
+        if (!room) {
+            await set(
+                roomReference(),
+                {
+                    roomCode:
+                        ROOM_CODE,
+
+                    status:
+                        "waiting",
+
+                    winners:
+                        [],
+
+                    createdAt:
+                        serverTimestamp()
+                }
+            );
+        }
+
+        const existingPlayer =
+            room &&
+            room.players &&
+            room.players[playerId];
+
+        if (
+            room &&
+            room.status ===
+                "started" &&
+            !existingPlayer
+        ) {
+            throw new Error(
+                "The game has already started. New players cannot join."
+            );
+        }
+
+        if (
+            room &&
+            room.status ===
+                "completed"
+        ) {
+            throw new Error(
+                "The game is complete. Ask the administrator to reset it."
+            );
+        }
+
+        if (existingPlayer) {
+            await update(
+                playerReference(),
+                {
+                    name:
+                        playerName,
+
+                    lastSeen:
+                        serverTimestamp()
+                }
+            );
+
+        } else {
+            await set(
+                playerReference(),
+                {
+                    playerId:
+                        playerId,
+
+                    name:
+                        playerName,
+
+                    status:
+                        "waiting",
+
+                    currentRound:
+                        1,
+
+                    completedRounds:
+                        0,
+
+                    piecesPlaced:
+                        0,
+
+                    gameCompleted:
+                        false,
+
+                    joinedAt:
+                        serverTimestamp(),
+
+                    lastSeen:
+                        serverTimestamp()
+                }
+            );
+        }
+
+        $("lobbyPlayerChip").textContent =
+            "Player: " +
+            playerName;
+
+        $("gamePlayerChip").textContent =
+            "Player: " +
+            playerName;
+
+        $("loginStatus").textContent =
+            "";
+
+        $("loginScreen").classList.add(
+            "hidden"
+        );
+
+        $("lobbyScreen").classList.remove(
+            "hidden"
+        );
+
+        listenToRoom();
+
+    } catch (error) {
+        $("joinButton").disabled =
+            false;
+
+        $("loginStatus").textContent =
+            error.message;
+
+        showToast(
+            error.message
+        );
+    }
+}
+
+/* Realtime listener */
+
+function listenToRoom() {
+    if (roomListenerStarted) {
+        return;
+    }
+
+    roomListenerStarted =
+        true;
+
+    onValue(
+        roomReference(),
+        function (snapshot) {
+            const room =
+                snapshot.val();
+
+            if (!room) {
+                renderPlayers(
+                    null
+                );
+
+                renderWinners(
+                    []
+                );
+
+                return;
+            }
+
+            const winners =
+                Array.isArray(
+                    room.winners
+                )
+                    ? room.winners
+                    : [];
+
+            renderPlayers(
+                room.players ||
+                null
+            );
+
+            renderWinners(
+                winners
+            );
+
+            if (
+                room.status ===
+                    "started" &&
+                room.startedAt &&
+                !gameStarted &&
+                playerName
+            ) {
+                beginCountdown(
+                    room.startedAt
+                );
+            }
+
+            if (
+                room.status ===
+                    "completed" ||
+                winners.length >=
+                    MAX_WINNERS
+            ) {
+                stopGameForEveryone(
+                    winners
+                );
+            }
+        }
+    );
+}
+
+function renderPlayers(playersObject) {
+    const players =
+        playersObject
+            ? Object.values(
+                playersObject
+            )
+            : [];
+
+    players.sort(
+        function (first, second) {
+            return (
+                (
+                    first.joinedAt ||
+                    0
+                ) -
+                (
+                    second.joinedAt ||
+                    0
+                )
+            );
+        }
+    );
+
+    $("playerList").innerHTML =
+        players
+            .map(
+                function (
+                    player,
+                    index
+                ) {
+                    const current =
+                        player.playerId ===
+                        playerId;
+
+                    return (
+                        '<div class="player-item ' +
+                        (
+                            current
+                                ? "current-player"
+                                : ""
+                        ) +
+                        '">' +
+                        (index + 1) +
+                        ". " +
+                        escapeHtml(
+                            player.name
+                        ) +
+                        (
+                            current
+                                ? " ✓"
+                                : ""
+                        ) +
+                        "</div>"
+                    );
+                }
+            )
+            .join("");
+
+    $("playerCount").textContent =
+        players.length;
+
+    $("playerCountWord").textContent =
+        players.length === 1
+            ? "Player"
+            : "Players";
+
+    renderLiveScores(
+        players
+    );
+}
+
+function renderLiveScores(players) {
+    const sorted =
+        [...players].sort(
+            function (first, second) {
+                return (
+                    (
+                        second.completedRounds ||
+                        0
+                    ) -
+                    (
+                        first.completedRounds ||
+                        0
+                    ) ||
+                    (
+                        second.piecesPlaced ||
+                        0
+                    ) -
+                    (
+                        first.piecesPlaced ||
+                        0
+                    )
+                );
+            }
+        );
+
+    $("scoreCount").textContent =
+        sorted.length;
+
+    $("scoreList").innerHTML =
+        sorted
+            .map(
+                function (
+                    player,
+                    index
+                ) {
+                    const completed =
+                        Number(
+                            player.completedRounds
+                        ) ||
+                        0;
+
+                    const pieces =
+                        Number(
+                            player.piecesPlaced
+                        ) ||
+                        0;
+
+                    const finished =
+                        Boolean(
+                            player.gameCompleted
+                        ) ||
+                        completed >= 5;
+
+                    const current =
+                        player.playerId ===
+                        playerId;
+
+                    const displayedRound =
+                        Math.max(
+                            1,
+                            Math.min(
+                                Number(
+                                    player.currentRound
+                                ) ||
+                                1,
+                                5
+                            )
+                        );
+
+                    const details =
+                        finished
+                            ? "All 5 rounds completed"
+                            : completed +
+                              " of 5 rounds completed • " +
+                              pieces +
+                              " of 20 pieces";
+
+                    return (
+                        '<div class="score-item ' +
+                        (
+                            current
+                                ? "current"
+                                : ""
+                        ) +
+                        " " +
+                        (
+                            finished
+                                ? "finished"
+                                : ""
+                        ) +
+                        '">' +
+
+                            '<div class="score-rank">' +
+                                (index + 1) +
+                            "</div>" +
+
+                            "<div>" +
+
+                                '<div class="score-name">' +
+                                    escapeHtml(
+                                        player.name
+                                    ) +
+                                    (
+                                        current
+                                            ? " • You"
+                                            : ""
+                                    ) +
+                                "</div>" +
+
+                                '<div class="score-detail">' +
+                                    details +
+                                "</div>" +
+
+                            "</div>" +
+
+                            '<div class="score-badge">' +
+                                (
+                                    finished
+                                        ? "Completed"
+                                        : "Round " +
+                                          displayedRound
+                                ) +
+                            "</div>" +
+
+                        "</div>"
+                    );
+                }
+            )
+            .join("");
+}
+
+/* Administrator controls */
+
+async function startGameForEveryone() {
+    if (!requireAdmin()) {
+        return;
+    }
+
+    const snapshot =
+        await get(
+            roomReference()
+        );
+
+    if (
+        !snapshot.exists() ||
+        !snapshot.val().players
+    ) {
+        showToast(
+            "At least one player must join."
+        );
+
+        return;
+    }
+
+    const room =
+        snapshot.val();
+
+    if (
+        room.status ===
+        "started"
+    ) {
+        showToast(
+            "The game has already started."
+        );
+
+        return;
+    }
+
+    if (
+        room.status ===
+        "completed"
+    ) {
+        showToast(
+            "Reset the previous game before starting again."
+        );
+
+        return;
+    }
+
+    await update(
+        roomReference(),
+        {
+            status:
+                "started",
+
+            startedAt:
+                Date.now() +
+                5000,
+
+            winners:
+                [],
+
+            startedBy:
+                auth.currentUser.uid
+        }
+    );
+}
+
+async function resetRoom() {
+    if (!requireAdmin()) {
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Reset the game and remove all players, progress, and winners?"
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    await set(
+        roomReference(),
+        null
+    );
+
+    sessionStorage.removeItem(
+        "jigsawPlayerId"
+    );
+
+    showToast(
+        "Game reset successfully."
+    );
+
+    setTimeout(
+        function () {
+            window.location.reload();
+        },
+        800
+    );
+}
+
+/* Countdown */
+
+function beginCountdown(timestamp) {
+    if (
+        gameStarted ||
+        gameEnded
+    ) {
+        return;
+    }
+
+    gameStarted =
+        true;
+
+    $("countdownOverlay").classList.remove(
+        "hidden"
+    );
+
+    const interval =
+        setInterval(
+            function () {
+                const remaining =
+                    timestamp -
+                    Date.now();
+
+                const seconds =
+                    Math.max(
+                        0,
+                        Math.ceil(
+                            remaining /
+                            1000
+                        )
+                    );
+
+                $("countdownNumber").textContent =
+                    seconds ||
+                    "GO!";
+
+                if (
+                    remaining <=
+                    0
+                ) {
+                    clearInterval(
+                        interval
+                    );
+
+                    setTimeout(
+                        startActualGame,
+                        200
+                    );
+                }
+            },
+            100
+        );
+}
+
+function startActualGame() {
+    $("countdownOverlay").classList.add(
+        "hidden"
+    );
+
+    $("lobbyScreen").classList.add(
+        "hidden"
+    );
+
+    $("resultOverlay").classList.add(
+        "hidden"
+    );
+
+    $("gameScreen").classList.remove(
+        "hidden"
+    );
+
+    currentRound =
+        0;
+
+    placedPieces =
+        0;
+
+    gameActive =
+        true;
+
+    winnerSubmitted =
+        false;
+
+    gameStartTime =
+        Date.now();
+
+    clearInterval(
+        timerInterval
+    );
+
+    timerInterval =
+        setInterval(
+            updateTimer,
+            1000
+        );
+
+    updateTimer();
+    loadRound();
+}
+
+function updateTimer() {
+    const seconds =
+        Math.floor(
+            (
+                Date.now() -
+                gameStartTime
+            ) /
+            1000
+        );
+
+    $("timer").textContent =
+        formatTime(
+            seconds
+        );
+}
+
+/* Firebase progress */
+
+async function saveRoundEntry() {
+    await update(
+        playerReference(),
+        {
+            status:
+                "playing",
+
+            currentRound:
+                currentRound +
+                1,
+
+            completedRounds:
+                currentRound,
+
+            piecesPlaced:
+                0,
+
+            gameCompleted:
+                false,
+
+            lastSeen:
+                serverTimestamp()
+        }
+    );
+}
+
+async function savePieceProgress() {
+    await update(
+        playerReference(),
+        {
+            piecesPlaced:
+                placedPieces,
+
+            lastSeen:
+                serverTimestamp()
+        }
+    );
+}
+
+/* Puzzle shape generation */
+
+function generateEdges() {
+    horizontalEdges =
+        Array.from(
+            {
+                length: 3
+            },
+            function () {
+                return Array.from(
+                    {
+                        length: 5
+                    },
+                    function () {
+                        return Math.random() <
+                            0.5
+                            ? -1
+                            : 1;
+                    }
+                );
+            }
+        );
+
+    verticalEdges =
+        Array.from(
+            {
+                length: 4
+            },
+            function () {
+                return Array.from(
+                    {
+                        length: 4
+                    },
+                    function () {
+                        return Math.random() <
+                            0.5
+                            ? -1
+                            : 1;
+                    }
+                );
+            }
+        );
+}
+
+function getEdges(row, column) {
+    return {
+        top:
+            row
+                ? -horizontalEdges[
+                    row - 1
+                ][column]
+                : 0,
+
+        bottom:
+            row < 3
+                ? horizontalEdges[
+                    row
+                ][column]
+                : 0,
+
+        left:
+            column
+                ? -verticalEdges[
+                    row
+                ][column - 1]
+                : 0,
+
+        right:
+            column < 4
+                ? verticalEdges[
+                    row
+                ][column]
+                : 0
+    };
+}
+
+function createPath(
+    context,
+    x,
+    y,
+    width,
+    height,
+    edges
+) {
+    const neck =
+        0.18;
+
+    const tab =
+        0.32;
+
+    context.beginPath();
+    context.moveTo(
+        x,
+        y
+    );
+
+    context.lineTo(
+        x +
+        width *
+        (0.5 - neck),
+        y
+    );
+
+    if (edges.top) {
+        context.bezierCurveTo(
+            x +
+            width *
+            0.38,
+            y,
+
+            x +
+            width *
+            0.32,
+            y -
+            edges.top *
+            height *
+            tab,
+
+            x +
+            width *
+            0.5,
+            y -
+            edges.top *
+            height *
+            tab
+        );
+
+        context.bezierCurveTo(
+            x +
+            width *
+            0.68,
+            y -
+            edges.top *
+            height *
+            tab,
+
+            x +
+            width *
+            0.62,
+            y,
+
+            x +
+            width *
+            (0.5 + neck),
+            y
+        );
+    }
+
+    context.lineTo(
+        x +
+        width,
+        y
+    );
+
+    context.lineTo(
+        x +
+        width,
+        y +
+        height *
+        (0.5 - neck)
+    );
+
+    if (edges.right) {
+        context.bezierCurveTo(
+            x +
+            width,
+            y +
+            height *
+            0.38,
+
+            x +
+            width +
+            edges.right *
+            width *
+            tab,
+
+            y +
+            height *
+            0.32,
+
+            x +
+            width +
+            edges.right *
+            width *
+            tab,
+
+            y +
+            height *
+            0.5
+        );
+
+        context.bezierCurveTo(
+            x +
+            width +
+            edges.right *
+            width *
+            tab,
+
+            y +
+            height *
+            0.68,
+
+            x +
+            width,
+            y +
+            height *
+            0.62,
+
+            x +
+            width,
+            y +
+            height *
+            (0.5 + neck)
+        );
+    }
+
+    context.lineTo(
+        x +
+        width,
+        y +
+        height
+    );
+
+    context.lineTo(
+        x +
+        width *
+        (0.5 + neck),
+        y +
+        height
+    );
+
+    if (edges.bottom) {
+        context.bezierCurveTo(
+            x +
+            width *
+            0.62,
+            y +
+            height,
+
+            x +
+            width *
+            0.68,
+            y +
+            height +
+            edges.bottom *
+            height *
+            tab,
+
+            x +
+            width *
+            0.5,
+            y +
+            height +
+            edges.bottom *
+            height *
+            tab
+        );
+
+        context.bezierCurveTo(
+            x +
+            width *
+            0.32,
+            y +
+            height +
+            edges.bottom *
+            height *
+            tab,
+
+            x +
+            width *
+            0.38,
+            y +
+            height,
+
+            x +
+            width *
+            (0.5 - neck),
+            y +
+            height
+        );
+    }
+
+    context.lineTo(
+        x,
+        y +
+        height
+    );
+
+    context.lineTo(
+        x,
+        y +
+        height *
+        (0.5 + neck)
+    );
+
+    if (edges.left) {
+        context.bezierCurveTo(
+            x,
+            y +
+            height *
+            0.62,
+
+            x -
+            edges.left *
+            width *
+            tab,
+
+            y +
+            height *
+            0.68,
+
+            x -
+            edges.left *
+            width *
+            tab,
+
+            y +
+            height *
+            0.5
+        );
+
+        context.bezierCurveTo(
+            x -
+            edges.left *
+            width *
+            tab,
+
+            y +
+            height *
+            0.32,
+
+            x,
+            y +
+            height *
+            0.38,
+
+            x,
+            y +
+            height *
+            (0.5 - neck)
+        );
+    }
+
+    context.closePath();
+}
+
+/* Load round */
+
+async function loadRound() {
+    if (gameEnded) {
+        return;
+    }
+
+    placedPieces =
+        0;
+
+    generateEdges();
+
+    $("roundHeading").textContent =
+        "Round " +
+        (
+            currentRound +
+            1
+        ) +
+        " of 5";
+
+    $("puzzleTitle").textContent =
+        PUZZLES[
+            currentRound
+        ].title;
+
+    $("pieceCounter").textContent =
+        "0 / 20";
+
+    $("roundStatus").textContent =
+        "Preview";
+
+    $("overallProgress").style.width =
+        currentRound *
+        20 +
+        "%";
+
+    $("puzzleStage").innerHTML =
+        "";
+
+    await saveRoundEntry();
+
+    const image =
+        new Image();
+
+    image.onload =
+        function () {
+            const stageWidth =
+                $("puzzleStage")
+                    .clientWidth;
+
+            const stageHeight =
+                $("puzzleStage")
+                    .clientHeight;
+
+            const scale =
+                Math.min(
+                    stageWidth *
+                    0.54 /
+                    image.naturalWidth,
+
+                    stageHeight *
+                    0.62 /
+                    image.naturalHeight
+                );
+
+            const width =
+                Math.round(
+                    image.naturalWidth *
+                    scale
+                );
+
+            const height =
+                Math.round(
+                    image.naturalHeight *
+                    scale
+                );
+
+            puzzleLayout = {
+                left:
+                    (
+                        stageWidth -
+                        width
+                    ) /
+                    2,
+
+                top:
+                    (
+                        stageHeight -
+                        height
+                    ) /
+                    2,
+
+                width:
+                    width,
+
+                height:
+                    height,
+
+                pieceWidth:
+                    width /
+                    5,
+
+                pieceHeight:
+                    height /
+                    4
+            };
+
+            const frame =
+                document.createElement(
+                    "div"
+                );
+
+            frame.className =
+                "puzzle-frame";
+
+            Object.assign(
+                frame.style,
+                {
+                    left:
+                        puzzleLayout
+                            .left +
+                        "px",
+
+                    top:
+                        puzzleLayout
+                            .top +
+                        "px",
+
+                    width:
+                        width +
+                        "px",
+
+                    height:
+                        height +
+                        "px"
+                }
+            );
+
+            $("puzzleStage")
+                .appendChild(
+                    frame
+                );
+
+            const preview =
+                document.createElement(
+                    "div"
+                );
+
+            preview.className =
+                "preview-image";
+
+            preview.style.backgroundImage =
+                'url("' +
+                PUZZLES[
+                    currentRound
+                ].image +
+                '")';
+
+            Object.assign(
+                preview.style,
+                {
+                    left:
+                        puzzleLayout
+                            .left +
+                        "px",
+
+                    top:
+                        puzzleLayout
+                            .top +
+                        "px",
+
+                    width:
+                        width +
+                        "px",
+
+                    height:
+                        height +
+                        "px"
+                }
+            );
+
+            preview.innerHTML =
+                '<div class="preview-label">' +
+                "Study the image for 2 seconds" +
+                "</div>";
+
+            $("puzzleStage")
+                .appendChild(
+                    preview
+                );
+
+            setTimeout(
+                function () {
+                    if (gameEnded) {
+                        return;
+                    }
+
+                    preview.remove();
+
+                    createPieces(
+                        image
+                    );
+
+                    $("roundStatus").textContent =
+                        "Arrange the 20 pieces";
+                },
+                2000
+            );
+        };
+
+    image.onerror =
+        function () {
+            showToast(
+                "Image not found: " +
+                PUZZLES[
+                    currentRound
+                ].image
+            );
+        };
+
+    image.src =
+        PUZZLES[
+            currentRound
+        ].image;
+}
+
+/* Create pieces */
+
+function createPieces(image) {
+    const margin =
+        Math.ceil(
+            Math.max(
+                puzzleLayout
+                    .pieceWidth,
+
+                puzzleLayout
+                    .pieceHeight
+            ) *
+            0.39
+        );
+
+    const indexes =
+        Array.from(
+            {
+                length:
+                    20
+            },
+            function (
+                _,
+                index
+            ) {
+                return index;
+            }
+        ).sort(
+            function () {
+                return (
+                    Math.random() -
+                    0.5
+                );
+            }
+        );
+
+    indexes.forEach(
+        function (index) {
+            const column =
+                index %
+                5;
+
+            const row =
+                Math.floor(
+                    index /
+                    5
+                );
+
+            const edges =
+                getEdges(
+                    row,
+                    column
+                );
+
+            const canvasWidth =
+                Math.ceil(
+                    puzzleLayout
+                        .pieceWidth +
+                    margin *
+                    2
+                );
+
+            const canvasHeight =
+                Math.ceil(
+                    puzzleLayout
+                        .pieceHeight +
+                    margin *
+                    2
+                );
+
+            const canvas =
+                document.createElement(
+                    "canvas"
+                );
+
+            const ratio =
+                window
+                    .devicePixelRatio ||
+                1;
+
+            canvas.width =
+                canvasWidth *
+                ratio;
+
+            canvas.height =
+                canvasHeight *
+                ratio;
+
+            canvas.style.width =
+                canvasWidth +
+                "px";
+
+            canvas.style.height =
+                canvasHeight +
+                "px";
+
+            canvas.className =
+                "puzzle-piece";
+
+            canvas.dataset.row =
+                row;
+
+            canvas.dataset.column =
+                column;
+
+            canvas.dataset.margin =
+                margin;
+
+            const context =
+                canvas.getContext(
+                    "2d"
+                );
+
+            context.scale(
+                ratio,
+                ratio
+            );
+
+            createPath(
+                context,
+                margin,
+                margin,
+                puzzleLayout
+                    .pieceWidth,
+                puzzleLayout
+                    .pieceHeight,
+                edges
+            );
+
+            context.save();
+            context.clip();
+
+            context.drawImage(
+                image,
+
+                -column *
+                puzzleLayout
+                    .pieceWidth +
+                margin,
+
+                -row *
+                puzzleLayout
+                    .pieceHeight +
+                margin,
+
+                puzzleLayout.width,
+                puzzleLayout.height
+            );
+
+            const gradient =
+                context
+                    .createLinearGradient(
+                        0,
+                        margin,
+                        0,
+                        margin +
+                        puzzleLayout
+                            .pieceHeight
+                    );
+
+            gradient.addColorStop(
+                0,
+                "rgba(255,255,255,0.32)"
+            );
+
+            gradient.addColorStop(
+                0.7,
+                "rgba(0,0,0,0)"
+            );
+
+            gradient.addColorStop(
+                1,
+                "rgba(0,0,0,0.13)"
+            );
+
+            context.fillStyle =
+                gradient;
+
+            context.fillRect(
+                margin -
+                puzzleLayout
+                    .pieceWidth,
+
+                margin -
+                puzzleLayout
+                    .pieceHeight,
+
+                puzzleLayout
+                    .pieceWidth *
+                3,
+
+                puzzleLayout
+                    .pieceHeight *
+                3
+            );
+
+            context.restore();
+
+            createPath(
+                context,
+                margin,
+                margin +
+                2,
+                puzzleLayout
+                    .pieceWidth,
+                puzzleLayout
+                    .pieceHeight,
+                edges
+            );
+
+            context.strokeStyle =
+                "rgba(0,0,0,0.45)";
+
+            context.lineWidth =
+                3;
+
+            context.stroke();
+
+            createPath(
+                context,
+                margin,
+                margin -
+                1,
+                puzzleLayout
+                    .pieceWidth,
+                puzzleLayout
+                    .pieceHeight,
+                edges
+            );
+
+            context.strokeStyle =
+                "rgba(255,255,255,0.84)";
+
+            context.lineWidth =
+                1.6;
+
+            context.stroke();
+
+            scatterPiece(
+                canvas,
+                canvasWidth,
+                canvasHeight
+            );
+
+            enableDragging(
+                canvas
+            );
+
+            $("puzzleStage")
+                .appendChild(
+                    canvas
+                );
+        }
+    );
+}
+
+function scatterPiece(
+    piece,
+    width,
+    height
+) {
+    let left =
+        0;
+
+    let top =
+        0;
+
+    for (
+        let attempt = 0;
+        attempt < 60;
+        attempt += 1
+    ) {
+        left =
+            Math.random() *
+            Math.max(
+                1,
+                $("puzzleStage")
+                    .clientWidth -
+                width
+            );
+
+        top =
+            Math.random() *
+            Math.max(
+                1,
+                $("puzzleStage")
+                    .clientHeight -
+                height
+            );
+
+        const centerX =
+            left +
+            width /
+            2;
+
+        const centerY =
+            top +
+            height /
+            2;
+
+        const insideTarget =
+            centerX >
+                puzzleLayout.left &&
+            centerX <
+                puzzleLayout.left +
+                puzzleLayout.width &&
+            centerY >
+                puzzleLayout.top &&
+            centerY <
+                puzzleLayout.top +
+                puzzleLayout.height;
+
+        if (!insideTarget) {
+            break;
+        }
+    }
+
+    piece.style.left =
+        left +
+        "px";
+
+    piece.style.top =
+        top +
+        "px";
+}
+
+function enableDragging(piece) {
+    let offsetX =
+        0;
+
+    let offsetY =
+        0;
+
+    piece.onpointerdown =
+        function (event) {
+            if (
+                piece.classList
+                    .contains(
+                        "locked"
+                    ) ||
+                !gameActive ||
+                gameEnded
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+
+            piece.setPointerCapture(
+                event.pointerId
+            );
+
+            const rectangle =
+                piece
+                    .getBoundingClientRect();
+
+            offsetX =
+                event.clientX -
+                rectangle.left;
+
+            offsetY =
+                event.clientY -
+                rectangle.top;
+
+            piece.style.zIndex =
+                200;
+        };
+
+    piece.onpointermove =
+        function (event) {
+            if (
+                !piece
+                    .hasPointerCapture(
+                        event.pointerId
+                    )
+            ) {
+                return;
+            }
+
+            const stageRectangle =
+                $("puzzleStage")
+                    .getBoundingClientRect();
+
+            piece.style.left =
+                Math.max(
+                    0,
+                    Math.min(
+                        stageRectangle.width -
+                        piece.offsetWidth,
+
+                        event.clientX -
+                        stageRectangle.left -
+                        offsetX
+                    )
+                ) +
+                "px";
+
+            piece.style.top =
+                Math.max(
+                    0,
+                    Math.min(
+                        stageRectangle.height -
+                        piece.offsetHeight,
+
+                        event.clientY -
+                        stageRectangle.top -
+                        offsetY
+                    )
+                ) +
+                "px";
+        };
+
+    piece.onpointerup =
+        function (event) {
+            if (
+                !piece
+                    .hasPointerCapture(
+                        event.pointerId
+                    )
+            ) {
+                return;
+            }
+
+            piece.releasePointerCapture(
+                event.pointerId
+            );
+
+            piece.style.zIndex =
+                10;
+
+            attemptSnap(
+                piece
+            );
+        };
+}
+
+function attemptSnap(piece) {
+    if (
+        gameEnded ||
+        !gameActive
+    ) {
+        return;
+    }
+
+    const row =
+        Number(
+            piece.dataset.row
+        );
+
+    const column =
+        Number(
+            piece.dataset.column
+        );
+
+    const margin =
+        Number(
+            piece.dataset.margin
+        );
+
+    const correctLeft =
+        puzzleLayout.left +
+        column *
+        puzzleLayout.pieceWidth -
+        margin;
+
+    const correctTop =
+        puzzleLayout.top +
+        row *
+        puzzleLayout.pieceHeight -
+        margin;
+
+    const distance =
+        Math.hypot(
+            parseFloat(
+                piece.style.left
+            ) -
+            correctLeft,
+
+            parseFloat(
+                piece.style.top
+            ) -
+            correctTop
+        );
+
+    const snapDistance =
+        Math.max(
+            puzzleLayout
+                .pieceWidth,
+
+            puzzleLayout
+                .pieceHeight
+        ) *
+        0.46;
+
+    if (
+        distance <=
+        snapDistance
+    ) {
+        piece.style.left =
+            correctLeft +
+            "px";
+
+        piece.style.top =
+            correctTop +
+            "px";
+
+        piece.classList.add(
+            "locked"
+        );
+
+        playMatchSound();
+
+        placedPieces +=
+            1;
+
+        $("pieceCounter").textContent =
+            placedPieces +
+            " / 20";
+
+        $("overallProgress").style.width =
+            (
+                (
+                    currentRound +
+                    placedPieces /
+                    20
+                ) /
+                5 *
+                100
+            ) +
+            "%";
+
+        savePieceProgress();
+
+        if (
+            placedPieces ===
+            20
+        ) {
+            completeRound();
+        }
+    }
+}
+
+/* Round completion */
+
+async function completeRound() {
+    if (gameEnded) {
+        return;
+    }
+
+    $("roundStatus").innerHTML =
+        '<b style="color:#16a34a">' +
+        "✓ Round complete" +
+        "</b>";
+
+    await update(
+        playerReference(),
+        {
+            currentRound:
+                currentRound +
+                1,
+
+            completedRounds:
+                currentRound +
+                1,
+
+            piecesPlaced:
+                20,
+
+            gameCompleted:
+                currentRound ===
+                4,
+
+            lastSeen:
+                serverTimestamp()
+        }
+    );
+
+    if (
+        currentRound <
+        4
+    ) {
+        setTimeout(
+            async function () {
+                if (gameEnded) {
+                    return;
+                }
+
+                currentRound +=
+                    1;
+
+                await loadRound();
+            },
+            1000
+        );
+
+    } else {
+        finishGame();
+    }
+}
+
+/* Top five winners */
+
+async function finishGame() {
+    if (
+        winnerSubmitted ||
+        gameEnded
+    ) {
+        return;
+    }
+
+    winnerSubmitted =
+        true;
+
+    gameActive =
+        false;
+
+    clearInterval(
+        timerInterval
+    );
+
+    const elapsedSeconds =
+        Math.floor(
+            (
+                Date.now() -
+                gameStartTime
+            ) /
+            1000
+        );
+
+    await update(
+        playerReference(),
+        {
+            status:
+                "completed",
+
+            currentRound:
+                5,
+
+            completedRounds:
+                5,
+
+            piecesPlaced:
+                20,
+
+            gameCompleted:
+                true,
+
+            completedAt:
+                serverTimestamp()
+        }
+    );
+
+    const winnerRecord = {
+        playerId:
+            playerId,
+
+        name:
+            playerName,
+
+        elapsedSeconds:
+            elapsedSeconds,
+
+        completedAt:
+            Date.now()
+    };
+
+    await runTransaction(
+        roomReference(),
+        function (room) {
+            if (!room) {
+                return room;
+            }
+
+            if (
+                !Array.isArray(
+                    room.winners
+                )
+            ) {
+                room.winners =
+                    [];
+            }
+
+            const alreadyPresent =
+                room.winners.some(
+                    function (winner) {
+                        return (
+                            winner.playerId ===
+                            playerId
+                        );
+                    }
+                );
+
+            if (
+                room.status ===
+                    "completed" ||
+                room.winners.length >=
+                    MAX_WINNERS ||
+                alreadyPresent
+            ) {
+                return room;
+            }
+
+            room.winners.push(
+                winnerRecord
+            );
+
+            if (
+                room.winners.length >=
+                MAX_WINNERS
+            ) {
+                room.status =
+                    "completed";
+
+                room.completedAt =
+                    Date.now();
+            }
+
+            return room;
+        }
+    );
+
+    const snapshot =
+        await get(
+            roomReference()
+        );
+
+    const winners =
+        snapshot.exists() &&
+        snapshot.val().winners
+            ? snapshot
+                .val()
+                .winners
+            : [];
+
+    if (
+        winners.length <
+        MAX_WINNERS
+    ) {
+        showWaitingForWinners(
+            winners
+        );
+    }
+}
+
+function showWaitingForWinners(winners) {
+    $("resultMessage").textContent =
+        "You completed all five puzzles. Waiting for the remaining top finishers...";
+
+    $("gameEndedMessage").textContent =
+        winners.length +
+        " of 5 winner positions have been filled.";
+
+    renderWinners(
+        winners
+    );
+
+    $("gameScreen").classList.add(
+        "hidden"
+    );
+
+    $("resultOverlay").classList.remove(
+        "hidden"
+    );
+}
+
+function stopGameForEveryone(winners) {
+    if (gameEnded) {
+        return;
+    }
+
+    gameEnded =
+        true;
+
+    gameActive =
+        false;
+
+    clearInterval(
+        timerInterval
+    );
+
+    renderWinners(
+        winners
+    );
+
+    $("resultMessage").textContent =
+        "Congratulations to the top five winners!";
+
+    $("gameEndedMessage").textContent =
+        "Five players have completed the game. The game has ended for all players.";
+
+    [
+        "loginScreen",
+        "lobbyScreen",
+        "gameScreen",
+        "countdownOverlay",
+        "scorePanel"
+    ].forEach(
+        function (id) {
+            $(id)
+                .classList
+                .add("hidden");
+        }
+    );
+
+    $("resultOverlay")
+        .classList
+        .remove("hidden");
+}
+
+function renderWinners(winners = []) {
+    const medals = [
+        "🥇",
+        "🥈",
+        "🥉",
+        "🏅",
+        "🎖️"
+    ];
+
+    const labels = [
+        "First Place",
+        "Second Place",
+        "Third Place",
+        "Fourth Place",
+        "Fifth Place"
+    ];
+
+    $("winnerList").innerHTML =
+        winners
+            .slice(
+                0,
+                MAX_WINNERS
+            )
+            .map(
+                function (
+                    winner,
+                    index
+                ) {
+                    return (
+                        '<div class="winner-item">' +
+
+                            '<div style="font-size:30px">' +
+                                medals[index] +
+                            "</div>" +
+
+                            "<div>" +
+
+                                "<b>" +
+                                    escapeHtml(
+                                        winner.name
+                                    ) +
+                                "</b>" +
+
+                                '<div class="subtitle">' +
+                                    labels[index] +
+                                "</div>" +
+
+                            "</div>" +
+
+                            "<b>" +
+                                formatTime(
+                                    winner
+                                        .elapsedSeconds ||
+                                    0
+                                ) +
+                            "</b>" +
+
+                        "</div>"
+                    );
+                }
+            )
+            .join("");
+}
+
+updateAdminInterface();
+listenToRoom();
+
+</script>
+</body>
+</html>
